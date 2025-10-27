@@ -8,13 +8,18 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::resource('dashboard', StudentController::class)->middleware(['auth', 'verified']);
-
 // Admin-only routes
 Route::middleware(['auth', 'verified', 'role:admin'])->group(function () {
     Route::get('/admin', function () {
         return view('admin.dashboard');
     })->name('admin.dashboard');
+});
+
+// student-only routes
+Route::middleware(['auth', 'verified', 'role:student'])->group(function () {
+    Route::get('/student', function () {
+        return view('student.dashboard');
+    })->name('student.dashboard');
 });
 
 Route::middleware('auth')->group(function () {
