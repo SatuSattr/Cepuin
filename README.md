@@ -1,104 +1,200 @@
-## Cepuin — Laravel 12 + Breeze
+## Project: **Cepuin**
+### Sistem Pengaduan Siswa Berbasis Laravel 12
 
-Project web app dengan Laravel 12 dan Laravel Breeze. Sudah dilengkapi sistem role sederhana: `student` (default) dan `admin`.
+**Framework:** Laravel 12 + Laravel Breeze
+**Database:** SQLite
+**Font:** Poppins
+**Color Palette:**
 
-### Prasyarat
-
-- PHP 8.2+
-- Composer 2+
-- Node.js 18+ dan npm
-- SQLite (default) atau MySQL (opsional)
-
-### Setup Cepat Setelah Pull
-
-Opsi 1 — sekali jalan:
-
-```bash
-composer run setup
-```
-
-Opsi 2 — langkah manual:
-
-```bash
-composer install
-cp .env.example .env   # jika .env belum ada
-php artisan key:generate
-
-# DB default: SQLite (sudah diset di .env)
-# pastikan file database SQLite ada
-php -r "file_exists('database/database.sqlite') || touch('database/database.sqlite');"
-
-php artisan migrate --force
-php artisan db:seed --force
-
-npm install
-npm run dev   # atau: npm run build
-```
-
-Jalankan aplikasi saat development:
-
-```bash
-composer run dev
-# Menjalankan: php artisan serve, queue:listen, dan npm run dev bersamaan
-```
-
-### Akun & Role
-
-- Registrasi user baru otomatis berperan `student`.
-- Akun admin bawaan (dari seeder):
-  - Email: admin@example.com
-  - Password: password
-- Halaman admin: `/admin` (hanya untuk role `admin`).
-
-Ubah role user via Tinker:
-
-```bash
-php artisan tinker
->>> App\Models\User::where('email', 'user@example.com')->update(['role' => 'admin']);
-```
-
-### Perintah Umum
-
-- Migrasi: `php artisan migrate`
-- Seed: `php artisan db:seed`
-- Test: `composer test`
-- Format kode (Pint): `vendor/bin/pint`
+* **Primary:** `#f2f2f2`
+* **Secondary:** `#800101`
 
 ---
 
-## Kolaborasi
+## 1. 🎯 **Tujuan Proyek**
 
-### Alur Kerja
-
-1. Buat issue untuk task/bug/fitur.
-2. Branch dari `main` dengan penamaan:
-   - `feat/nama-fitur`
-   - `fix/bug-apa`
-   - `chore/aktivitas`
-3. Kembangkan fitur, tambahkan migrasi baru (jangan mengubah migrasi lama yang sudah dijalankan tim).
-4. Jalankan `composer test` dan pastikan lulus.
-5. Format kode dengan Pint: `vendor/bin/pint`.
-6. Buat Pull Request ke `main` dengan deskripsi jelas (tujuan, perubahan, cara uji, screenshot jika UI).
-7. Minimal 1 approval review sebelum merge. Gunakan squash merge.
-
-### Panduan Kode
-
-- Ikuti konvensi Laravel (controllers, requests, resources, policies jika perlu).
-- Untuk perubahan schema: buat migrasi baru; untuk data awal/role, gunakan seeder idempoten.
-- Lindungi route sesuai role, contoh:
-  - Admin: `Route::middleware(['auth','verified','role:admin'])->group(...);`
-  - Student: `Route::middleware(['auth','role:student'])->group(...);`
-- Hindari commit `.env` dan secrets.
-
-### Lingkungan
-
-- Default DB adalah SQLite (lihat `.env`). Untuk MySQL, sesuaikan `DB_CONNECTION`, `DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD`.
-- Queue default: `database`. Saat dev: `php artisan queue:listen` (sudah termasuk pada `composer run dev`).
-
-### Commit Message
-
-- Disarankan mengikuti Conventional Commits (opsional): `feat: ...`, `fix: ...`, `chore: ...`, `refactor: ...`, `test: ...`.
+Cepuin adalah sistem pengaduan siswa digital yang membantu siswa melaporkan kejadian secara aman kepada konselor (BK).
+Proyek ini dirancang agar mudah digunakan, ringan, dan mudah dikembangkan oleh tim SMK.
 
 ---
 
-Pertanyaan atau butuh akses? Buat issue atau hubungi maintainer proyek.
+## 2. 👥 **Role dan Akses**
+
+| Role                      | Deskripsi                          | Fitur Utama                                             |
+| ------------------------- | ---------------------------------- | ------------------------------------------------------- |
+| **Student (Siswa)**       | Dapat membuat dan memantau laporan | Membuat laporan baru, melihat status laporan            |
+| **Admin / Konselor (BK)** | Petugas yang menangani laporan     | Melihat semua laporan, mengubah status, memberi catatan |
+
+---
+
+## 3. 🧩 **Fitur Utama**
+
+### 3.1. Landing Page
+
+* Tampilkan **form laporan langsung di halaman utama**.
+* Jika pengguna belum login, diarahkan ke halaman login Breeze.
+* Tombol **“Masuk sebagai Admin”** di pojok bawah.
+
+**Isi Form:**
+
+* Nama siswa yang dilaporkan
+* Kelas
+* Waktu kejadian
+* Kronologi
+* Upload bukti foto
+* Tombol **Kirim Laporan**
+
+---
+
+### 3.2. Autentikasi
+
+Menggunakan Laravel Breeze:
+
+* **Siswa:** mendaftar sendiri.
+* **Admin:** ditambahkan manual melalui seeder.
+* Validasi form login/register wajib dilakukan di sisi server.
+
+---
+
+### 3.3. Dashboard Siswa
+
+* Menampilkan daftar laporan siswa (card view).
+* Setiap laporan menampilkan:
+
+  * Nama siswa yang dilaporkan
+  * Status laporan (Dilaporkan, Direview, Diproses, Selesai)
+  * Tanggal laporan
+  * Tombol “Lihat Detail”
+* Tombol **“+ Buat Laporan Baru”**.
+
+---
+
+### 3.4. Dashboard Admin/Konselor
+
+* Sidebar navigasi:
+
+  * 📄 Semua Laporan
+  * 👥 Data Siswa
+  * ⚙️ Pengaturan
+* Tabel laporan menampilkan:
+
+  * Nama pelapor
+  * Nama yang dilaporkan
+  * Status laporan
+  * Waktu kejadian
+  * Tombol aksi (Review, Update Status, Delete)
+* Admin dapat memberi **catatan konselor** dan mengubah status laporan.
+
+---
+
+### 3.5. Notifikasi & Status
+
+* Status laporan:
+
+  * 🟥 Dilaporkan
+  * 🟨 Direview
+  * 🟦 Diproses
+  * 🟩 Selesai
+* Siswa hanya bisa mengedit laporan selama status masih **Dilaporkan**.
+
+---
+
+## 4. 📊 **Struktur Database (SQLite)**
+
+### Tabel `users`
+
+| Field      | Type                    | Keterangan           |
+| ---------- | ----------------------- | -------------------- |
+| id         | integer                 | Primary key          |
+| name       | string                  | Nama pengguna        |
+| email      | string                  | Email unik           |
+| password   | string                  | Password terenkripsi |
+| role       | enum(`student`,`admin`) | Jenis pengguna       |
+| created_at | timestamp               | Otomatis             |
+| updated_at | timestamp               | Otomatis             |
+
+### Tabel `reports`
+
+| Field          | Type                                               | Keterangan                  |
+| -------------- | -------------------------------------------------- | --------------------------- |
+| id             | integer                                            | Primary key                 |
+| reporter_id    | foreignId(`users`)                                 | Relasi pelapor              |
+| reported_name  | string                                             | Nama siswa yang dilaporkan  |
+| reported_class | string                                             | Kelas siswa yang dilaporkan |
+| incident_time  | datetime                                           | Waktu kejadian              |
+| description    | text                                               | Kronologi                   |
+| photo_path     | string                                             | Path foto                   |
+| status         | enum(`dilaporkan`,`direview`,`diproses`,`selesai`) | Status laporan              |
+| counselor_note | text                                               | Catatan konselor            |
+| created_at     | timestamp                                          | Otomatis                    |
+| updated_at     | timestamp                                          | Otomatis                    |
+
+---
+
+## 5. 🎨 **Desain UI**
+
+### Warna
+
+* Background utama: `#f2f2f2`
+* Tombol utama & header: `#800101`
+* Font: **Poppins**
+
+### Komponen UI
+
+| Elemen       | Desain                                          |
+| ------------ | ----------------------------------------------- |
+| Navbar       | Merah rose dengan teks putih                    |
+| Button       | Rounded, shadow lembut, hover warna lebih gelap |
+| Card laporan | Putih dengan border halus                       |
+| Status badge | Warna berbeda sesuai tahap laporan              |
+
+---
+
+## 6. ⚙️ **Teknologi**
+
+* Laravel 12 (Backend)
+* Laravel Breeze (Auth)
+* Tailwind CSS (Frontend)
+* SQLite (Database)
+* Storage Laravel untuk upload foto
+
+---
+
+## 7. 🔒 **Keamanan**
+
+* Semua rute laporan menggunakan middleware `auth`.
+* File foto disimpan di `storage/app/public/reports`.
+* Validasi input wajib (server & client).
+* Proteksi CSRF aktif.
+
+---
+
+## 8. 👨‍💻 **Pembagian Tugas Developer (5 Orang)**
+
+
+| Developer                                         | Fokus Utama                                     | Detail Tugas Mandiri                                                                                                                                                                                                                                                                                                                        |
+| ------------------------------------------------- | ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Dev 1 – Autentikasi & Role System**             | Login, Register, dan Redirect                   | - Setup Laravel Breeze (register, login, logout).<br>- Tambahkan kolom `role` di tabel `users` (`student`, `admin`).<br>- Buat middleware `CheckRole` untuk redirect otomatis setelah login.<br>- Buat halaman login dan register dengan desain sederhana pakai Tailwind.<br>- Pastikan redirect siswa ke `/student` dan admin ke `/admin`. |
+| **Dev 2 – Landing Page & Form Laporan (Public)**  | Halaman depan yang bisa simpan laporan langsung | - Buat route `/` dan view `landing.blade.php`.<br>- Tambahkan form laporan: nama siswa yang dilaporkan, kelas, waktu, kronologi, upload bukti foto.<br>- Simpan laporan ke tabel `reports` via `ReportController@store`.<br>- Jika belum login, arahkan ke login (pakai `@guest` directive).<br>- Desain form sendiri, warna sesuai PRD.    |
+| **Dev 3 – Dashboard Siswa (Student)**             | Halaman laporan siswa                           | - Buat route `/student` dan controller `StudentController`.<br>- Tampilkan semua laporan milik user yang login (pakai `auth()->id()`).<br>- Tambahkan status badge (`Dilaporkan`, `Direview`, `Diproses`, `Selesai`).<br>- Bisa klik “Detail” untuk lihat isi laporan + foto bukti.<br>- Bonus: tombol “Buat Laporan Baru” (opsional).      |
+| **Dev 4 – Dashboard Admin (Konselor/BK)**         | Halaman manajemen laporan                       | - Buat route `/admin` dan controller `AdminController`.<br>- Tampilkan semua laporan dari tabel `reports` dalam bentuk tabel.<br>- Tambahkan dropdown ubah status laporan + tombol “Simpan”.<br>- Tambahkan kolom “Catatan Konselor”.<br>- Desain dashboard admin dengan sidebar dan warna merah `#800101`.                                 |
+| **Dev 5 – Profil & Pengaturan Akun (Semua User)** | Halaman profil user                             | - Buat route `/profile` dan controller `ProfileController`.<br>- Tampilkan data nama, email, dan role user login.<br>- Bisa ubah nama, password, dan foto profil (upload sederhana).<br>- Styling tetap dengan Poppins dan warna PRD.<br>- Tambahkan tombol logout di navbar.                                                               |
+
+---
+
+## 📁 Contoh Struktur Folder Akhir (Gabungan)
+
+```
+resources/
+ └── views/
+      ├── landing.blade.php         (Dev 2)
+      ├── auth/                     (Dev 1)
+      │    ├── login.blade.php
+      │    └── register.blade.php
+      ├── student/
+      │    └── dashboard.blade.php  (Dev 3)
+      ├── admin/
+      │    └── dashboard.blade.php  (Dev 4)
+      └── profile.blade.php         (Dev 5)
+```
+
