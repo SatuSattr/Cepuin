@@ -1,61 +1,104 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+## Cepuin — Laravel 12 + Breeze
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Project web app dengan Laravel 12 dan Laravel Breeze. Sudah dilengkapi sistem role sederhana: `student` (default) dan `admin`.
 
-## About Laravel
+### Prasyarat
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- PHP 8.2+
+- Composer 2+
+- Node.js 18+ dan npm
+- SQLite (default) atau MySQL (opsional)
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+### Setup Cepat Setelah Pull
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Opsi 1 — sekali jalan:
 
-## Learning Laravel
+```bash
+composer run setup
+```
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+Opsi 2 — langkah manual:
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+```bash
+composer install
+cp .env.example .env   # jika .env belum ada
+php artisan key:generate
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+# DB default: SQLite (sudah diset di .env)
+# pastikan file database SQLite ada
+php -r "file_exists('database/database.sqlite') || touch('database/database.sqlite');"
 
-## Laravel Sponsors
+php artisan migrate --force
+php artisan db:seed --force
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+npm install
+npm run dev   # atau: npm run build
+```
 
-### Premium Partners
+Jalankan aplikasi saat development:
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+```bash
+composer run dev
+# Menjalankan: php artisan serve, queue:listen, dan npm run dev bersamaan
+```
 
-## Contributing
+### Akun & Role
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+- Registrasi user baru otomatis berperan `student`.
+- Akun admin bawaan (dari seeder):
+  - Email: admin@example.com
+  - Password: password
+- Halaman admin: `/admin` (hanya untuk role `admin`).
 
-## Code of Conduct
+Ubah role user via Tinker:
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+```bash
+php artisan tinker
+>>> App\Models\User::where('email', 'user@example.com')->update(['role' => 'admin']);
+```
 
-## Security Vulnerabilities
+### Perintah Umum
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+- Migrasi: `php artisan migrate`
+- Seed: `php artisan db:seed`
+- Test: `composer test`
+- Format kode (Pint): `vendor/bin/pint`
 
-## License
+---
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## Kolaborasi
+
+### Alur Kerja
+
+1. Buat issue untuk task/bug/fitur.
+2. Branch dari `main` dengan penamaan:
+   - `feat/nama-fitur`
+   - `fix/bug-apa`
+   - `chore/aktivitas`
+3. Kembangkan fitur, tambahkan migrasi baru (jangan mengubah migrasi lama yang sudah dijalankan tim).
+4. Jalankan `composer test` dan pastikan lulus.
+5. Format kode dengan Pint: `vendor/bin/pint`.
+6. Buat Pull Request ke `main` dengan deskripsi jelas (tujuan, perubahan, cara uji, screenshot jika UI).
+7. Minimal 1 approval review sebelum merge. Gunakan squash merge.
+
+### Panduan Kode
+
+- Ikuti konvensi Laravel (controllers, requests, resources, policies jika perlu).
+- Untuk perubahan schema: buat migrasi baru; untuk data awal/role, gunakan seeder idempoten.
+- Lindungi route sesuai role, contoh:
+  - Admin: `Route::middleware(['auth','verified','role:admin'])->group(...);`
+  - Student: `Route::middleware(['auth','role:student'])->group(...);`
+- Hindari commit `.env` dan secrets.
+
+### Lingkungan
+
+- Default DB adalah SQLite (lihat `.env`). Untuk MySQL, sesuaikan `DB_CONNECTION`, `DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD`.
+- Queue default: `database`. Saat dev: `php artisan queue:listen` (sudah termasuk pada `composer run dev`).
+
+### Commit Message
+
+- Disarankan mengikuti Conventional Commits (opsional): `feat: ...`, `fix: ...`, `chore: ...`, `refactor: ...`, `test: ...`.
+
+---
+
+Pertanyaan atau butuh akses? Buat issue atau hubungi maintainer proyek.
