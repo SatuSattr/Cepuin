@@ -198,3 +198,17 @@ resources/
       └── profile.blade.php         (Dev 5)
 ```
 
+# ✅ Instalasi Saat Pertamakali Pull
+
+```bash
+composer install
+cp .env.example .env        
+php artisan key:generate
+php artisan migrate
+npm install
+npm run dev
+php artisan serve
+```
+
+
+
