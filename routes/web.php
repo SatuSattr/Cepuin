@@ -23,6 +23,13 @@ Route::middleware(['auth', 'verified', 'role:student'])->group(function () {
     // ✅ Tambahin CRUD Student (khusus student)
     Route::get('/student/create', [StudentController::class, 'create'])->name('student.create');
     Route::post('/student', [StudentController::class, 'store'])->name('student.store');
+
+    // ✅ Route show student (lewat controller)
+    Route::get('/student/{id}', [StudentController::class, 'show'])->name('student.show');
+
+    // ✅ Edit laporan
+    Route::get('/student/{id}/edit', [StudentController::class, 'edit'])->name('student.edit');
+    Route::put('/student/{id}', [StudentController::class, 'update'])->name('student.update');
 });
 
 

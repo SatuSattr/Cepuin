@@ -42,7 +42,7 @@
                                 </span>
                             </td>
                             <td class="py-3 px-4 text-center">
-                                <button class="text-secondary font-medium hover:underline">Detail</button>
+                                <a href="{{ route('student.show', $r->id) }}" class="text-secondary font-medium hover:underline">Detail</a>
                             </td>
                         </tr>
                             @empty
@@ -58,7 +58,7 @@
 
             <!-- Footer -->
             <div class="p-4 border-t border-secondary/20 text-sm text-gray-600 text-center bg-gray-50">
-                Menampilkan <span class="font-semibold text-secondary">2</span> laporan dari total <span class="font-semibold">12</span> data siswa
+                Menampilkan laporan dari masalah yang ditemukan 
             </div>
         </div>
     </div>
