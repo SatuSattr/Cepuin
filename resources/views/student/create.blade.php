@@ -1,150 +1,169 @@
-<x-app-layout>
-    <div class="min-h-screen bg-primary text-gray-900 py-10 px-6">
-        <!-- CARD FORM -->
-        <div class="max-w-3xl mx-auto bg-white border border-secondary/30 shadow-xl rounded-2xl p-8">
-            <!-- HEADER -->
-            <h1 class="text-3xl font-bold mb-2 text-secondary">Formulir Laporan Siswa</h1>
-            <p class="text-gray-600 mb-8 text-sm">
-                Silakan isi formulir di bawah ini untuk melaporkan kejadian seperti pembulian, pemalakan, atau pelanggaran lainnya.
-                Identitas pelapor dijaga kerahasiaannya.
-            </p>
+@extends('student.layout')
 
-            <form action="{{ route('student.store') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
-                @csrf
 
-                <input type="hidden" name="user_id" value="{{ Auth::user()->name }}">
-                <input type="hidden" name="status" value="dilaporkan">
-                <input type="hidden" name="status" value="dilaporkan">
-                <input type="hidden" name="counselor_note" value="Belum ada">
 
-                <!-- NAMA TERLAPOR -->
-                <div>
-                    <label for="reported_name" class="block text-sm font-semibold mb-1 text-secondary">
-                        Nama Terlapor
-                    </label>
-                    <input 
-                        type="text"  
-                        name="reported_name" 
-                        id="reported_name"
-                        class="w-full rounded-lg border border-gray-300 bg-primary text-gray-800 px-4 py-2.5 
-                               focus:outline-none focus:ring-2 focus:ring-secondary transition"
-                        placeholder="Masukkan nama siswa yang dilaporkan"
-                        required
-                    />
+@section('content')
+    <section class="px-6 sm:px-10 lg:px-16">
+        <div class="mx-auto flex max-w-5xl flex-col gap-6">
+            <div
+                class="rounded-3xl border border-white/70 bg-primary px-8 py-8 shadow-[0_32px_60px_-24px_rgba(128,1,1,0.35)] backdrop-blur-xl">
+                <div class="flex flex-col gap-3">
+                    <p class="text-xs uppercase tracking-[4px] text-neutral-400">Buat Laporan</p>
+                    <h2 class="text-3xl font-semibold text-[var(--color-secondary)] sm:text-4xl">
+                        Ceritakan kejadian yang ingin kamu laporkan.
+                    </h2>
+                    <p class="text-sm text-neutral-500 sm:text-base">
+                        Identitasmu dijaga kerahasiaannya oleh konselor. Isi formulir berikut dengan detail agar proses
+                        penanganan lebih cepat.
+                    </p>
                 </div>
+            </div>
 
-                <!-- KELAS TERLAPOR -->
-                <div>
-                    <label for="reported_class" class="block text-sm font-semibold mb-1 text-secondary">
-                        Kelas Terlapor
-                    </label>
-                    <input 
-                        type="text"  
-                        name="reported_class" 
-                        id="reported_class"
-                        class="w-full rounded-lg border border-gray-300 bg-primary text-gray-800 px-4 py-2.5 
-                               focus:outline-none focus:ring-2 focus:ring-secondary transition"
-                        placeholder="Contoh: X IPA 2"
-                        required
-                    />
-                </div>
-
-                <!-- WAKTU KEJADIAN -->
-                <div>
-                    <label for="incident_time" class="block text-sm font-semibold mb-1 text-secondary">
-                        Waktu Kejadian
-                    </label>
-                    <input 
-                        type="datetime-local" 
-                        name="incident_time" 
-                        id="incident_time"
-                        class="w-full rounded-lg border border-gray-300 bg-primary text-gray-800 px-4 py-2.5 
-                               focus:outline-none focus:ring-2 focus:ring-secondary transition"
-                        required
-                    />
-                </div>
-
-                <!-- DESKRIPSI KEJADIAN -->
-                <div>
-                    <label for="description" class="block text-sm font-semibold mb-1 text-secondary">
-                        Deskripsi Kejadian
-                    </label>
-                    <textarea 
-                        name="description" 
-                        id="description"
-                        rows="4"
-                        class="w-full rounded-lg border border-gray-300 bg-primary text-gray-800 px-4 py-2.5 
-                               focus:outline-none focus:ring-2 focus:ring-secondary transition"
-                        placeholder="Ceritakan secara singkat kejadian yang terjadi..."
-                        required
-                    ></textarea>
-                </div>
-
-                <!-- FOTO KEJADIAN -->
-                <div>
-                    <label for="photo_path" class="block text-sm font-semibold mb-2 text-secondary">
-                        Bukti Foto
-                    </label>
-                    <input 
-                        type="file" 
-                        name="photo_path" 
-                        id="photoInput"
-                        accept="image/*"
-                        class="w-full rounded-lg border border-gray-300 bg-primary text-gray-700 px-4 py-2.5 
-                               file:bg-secondary file:border-0 file:rounded-lg file:text-sm file:text-white 
-                               file:px-4 file:py-2 file:mr-3 hover:file:bg-secondary/90 transition"
-                    />
-                    <p class="text-xs text-gray-500 mt-1">Format: JPG, PNG, atau WEBP (maks. 2MB)</p>
-
-                    <!-- Preview -->
-                    <div class="mt-4 hidden" id="previewContainer">
-                        <p class="text-xs text-gray-500 mb-2">Preview bukti foto:</p>
-                        <img id="previewImage" 
-                             class="w-36 h-48 object-cover rounded-lg border border-gray-300 shadow-md" 
-                             alt="Preview Gambar">
+            @if ($errors->any())
+                <div class="rounded-2xl border border-red-200 bg-red-50 px-6 py-4 text-red-700 shadow-sm shadow-red-100">
+                    <div class="flex items-start gap-3">
+                        <span
+                            class="mt-1 inline-flex h-8 w-8 items-center justify-center rounded-xl bg-red-100 text-red-600">
+                            <i class="fa-solid fa-circle-exclamation"></i>
+                        </span>
+                        <div>
+                            <p class="font-semibold">Periksa kembali isianmu</p>
+                            <ul class="mt-2 list-disc pl-5 text-sm text-red-600">
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
                     </div>
                 </div>
+            @endif
 
-                <!-- TOMBOL -->
-                <div class="flex justify-end gap-3 pt-4">
-                    <a 
-                        href="/student"
-                        class="px-6 py-2.5 bg-gray-300 hover:bg-gray-400 rounded-lg text-gray-800 text-sm 
-                               font-medium transition-all"
-                    >
-                        Batal
-                    </a>
+            <div
+                class="rounded-3xl border border-white/70 bg-primary px-8 py-10 shadow-[0_28px_60px_-30px_rgba(15,23,42,0.35)] backdrop-blur-xl">
+                <form action="{{ route('student.store') }}" method="POST" enctype="multipart/form-data" class="grid gap-8">
+                    @csrf
 
-                    <button 
-                        type="submit" 
-                        class="px-6 py-2.5 bg-secondary hover:bg-secondary/90 rounded-lg text-white text-sm 
-                               font-semibold shadow-md transition-all"
-                    >
-                        Kirim Laporan
-                    </button>
-                </div>
-            </form>
+                    <div class="grid gap-6 md:grid-cols-2">
+                        <div class="flex flex-col gap-3">
+                            <label for="reported_name"
+                                class="text-xs font-semibold uppercase tracking-[3px] text-neutral-500">
+                                Nama Terlapor
+                            </label>
+                            <input type="text" name="reported_name" id="reported_name" value="{{ old('reported_name') }}"
+                                placeholder="Masukkan nama siswa yang dilaporkan"
+                                class="rounded-2xl border border-neutral-200/70 bg-neutral-50/70 px-4 py-3 text-sm text-neutral-700 placeholder:text-neutral-400 focus:border-[var(--color-secondary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-secondary)]/20"
+                                required>
+                        </div>
+
+                        <div class="flex flex-col gap-3">
+                            <label for="reported_class"
+                                class="text-xs font-semibold uppercase tracking-[3px] text-neutral-500">
+                                Kelas Terlapor
+                            </label>
+                            <input type="text" name="reported_class" id="reported_class"
+                                value="{{ old('reported_class') }}" placeholder="Contoh: XI IPA 2"
+                                class="rounded-2xl border border-neutral-200/70 bg-neutral-50/70 px-4 py-3 text-sm text-neutral-700 placeholder:text-neutral-400 focus:border-[var(--color-secondary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-secondary)]/20"
+                                required>
+                        </div>
+                    </div>
+
+                    <div class="grid gap-6 md:grid-cols-2">
+                        <div class="flex flex-col gap-3">
+                            <label for="incident_time"
+                                class="text-xs font-semibold uppercase tracking-[3px] text-neutral-500">
+                                Waktu Kejadian
+                            </label>
+                            <input type="datetime-local" name="incident_time" id="incident_time"
+                                value="{{ old('incident_time') }}"
+                                class="rounded-2xl border border-neutral-200/70 bg-neutral-50/70 px-4 py-3 text-sm text-neutral-700 placeholder:text-neutral-400 focus:border-[var(--color-secondary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-secondary)]/20"
+                                required>
+                            <p class="text-xs text-neutral-400">
+                                Pilih tanggal dan jam saat kejadian berlangsung.
+                            </p>
+                        </div>
+
+                        <div class="flex flex-col gap-3">
+                            <label for="photo_path" class="text-xs font-semibold uppercase tracking-[3px] text-neutral-500">
+                                Bukti Foto (Opsional)
+                            </label>
+                            <label
+                                class="flex cursor-pointer flex-col items-center justify-center gap-3 rounded-2xl border border-dashed border-neutral-300 bg-neutral-50/70 px-4 py-6 text-center text-sm text-neutral-500 transition hover:border-[var(--color-secondary)]/40 hover:bg-white">
+                                <input type="file" name="photo_path" id="photoInput" accept="image/*" class="hidden">
+                                <span
+                                    class="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-[var(--color-secondary)]/10 text-xl text-[var(--color-secondary)]">
+                                    <i class="fa-solid fa-cloud-arrow-up"></i>
+                                </span>
+                                <div>
+                                    <p class="font-medium text-neutral-600">Tarik file ke sini atau pilih dari perangkat</p>
+                                    <p class="mt-1 text-xs text-neutral-400">Format JPG, PNG, atau WEBP (maks. 2MB)</p>
+                                </div>
+                            </label>
+                            <div id="previewContainer"
+                                class="hidden rounded-2xl border border-neutral-200/70 bg-white px-4 py-4 shadow-inner shadow-neutral-100">
+                                <p class="text-xs uppercase tracking-[2px] text-neutral-400">Preview Bukti</p>
+                                <img id="previewImage" alt="Preview bukti"
+                                    class="mt-3 h-48 w-full rounded-2xl object-cover">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col gap-3">
+                        <label for="description" class="text-xs font-semibold uppercase tracking-[3px] text-neutral-500">
+                            Kronologi Kejadian
+                        </label>
+                        <textarea name="description" id="description" rows="6"
+                            placeholder="Jelaskan secara rinci kronologi kejadian, pihak yang terlibat, dan lokasi kejadian."
+                            class="rounded-2xl border border-neutral-200/70 bg-neutral-50/70 px-4 py-3 text-sm text-neutral-700 placeholder:text-neutral-400 focus:border-[var(--color-secondary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-secondary)]/20"
+                            required>{{ old('description') }}</textarea>
+                        <p class="text-xs text-neutral-400">
+                            Kronologi yang jelas akan membantu konselor memahami situasi dan memberikan tindak lanjut yang
+                            tepat.
+                        </p>
+                    </div>
+
+                    <div class="flex flex-wrap justify-end gap-3">
+                        <a href="{{ route('student.dashboard') }}"
+                            class="inline-flex items-center gap-2 rounded-2xl border border-neutral-300 bg-white px-5 py-3 text-sm font-medium text-neutral-500 transition hover:border-neutral-400 hover:text-neutral-700">
+                            <i class="fa-solid fa-arrow-left-long text-xs"></i>
+                            Batal
+                        </a>
+
+                        <button type="submit"
+                            class="inline-flex items-center gap-2 rounded-2xl bg-[var(--color-secondary)] px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-[rgba(128,1,1,0.25)] transition hover:bg-[#6c0000]">
+                            <i class="fa-solid fa-paper-plane text-xs"></i>
+                            Kirim Laporan
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
-    </div>
+    </section>
+@endsection
 
-    <!-- Script Live Preview Gambar -->
+@push('scripts')
     <script>
-        const inputGambar = document.getElementById('photoInput');
-        const previewImage = document.getElementById('previewImage');
-        const previewContainer = document.getElementById('previewContainer');
+        document.addEventListener('DOMContentLoaded', () => {
+            const fileInput = document.getElementById('photoInput');
+            const previewContainer = document.getElementById('previewContainer');
+            const previewImage = document.getElementById('previewImage');
 
-        inputGambar.addEventListener('change', function (e) {
-            const file = e.target.files[0];
-            if (file) {
+            fileInput?.addEventListener('change', (event) => {
+                const file = event.target.files?.[0];
+                if (!file) {
+                    previewContainer?.classList.add('hidden');
+                    previewImage?.removeAttribute('src');
+                    return;
+                }
+
                 const reader = new FileReader();
-                reader.onload = function (event) {
-                    previewImage.src = event.target.result;
+                reader.onload = (e) => {
+                    if (!previewImage || !previewContainer) return;
+                    previewImage.src = e.target?.result;
                     previewContainer.classList.remove('hidden');
                 };
+
                 reader.readAsDataURL(file);
-            } else {
-                previewContainer.classList.add('hidden');
-            }
+            });
         });
     </script>
-</x-app-layout>
+@endpush

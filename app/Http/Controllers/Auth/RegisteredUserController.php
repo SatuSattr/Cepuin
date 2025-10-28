@@ -19,7 +19,6 @@ class RegisteredUserController extends Controller
      */
     public function create(): View
     {
-        // Ini hanya menampilkan view register, tidak membuat user
         return view('auth.register');
     }
 
@@ -29,30 +28,24 @@ class RegisteredUserController extends Controller
      * @throws \Illuminate\Validation\ValidationException
      */
     public function store(Request $request): RedirectResponse
-{
-    $request->validate([
-        'name' => ['required', 'string', 'max:255'],
-        'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
-        'password' => ['required', 'confirmed', Rules\Password::defaults()],
-    ]);
+    {
+        $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+        ]);
 
-    $user = User::create([
-        'name' => $request->name,
-        'email' => $request->email,
-        'password' => Hash::make($request->password),
-        'role' => 'student',
-    ]);
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'role' => 'student',
+        ]);
 
-    event(new Registered($user));
-    Auth::login($user);
+        event(new Registered($user));
 
-    // 🧭 Redirect sesuai role
-    if ($user->role === 'admin') {
-        return redirect()->route('admin.dashboard');
+        Auth::login($user);
+
+        return redirect()->route('dashboard');
     }
-
-    return redirect()->route('student.dashboard');
 }
-
-}
-

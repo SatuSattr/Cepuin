@@ -18,7 +18,10 @@ class StudentController extends Controller
             ->latest()
             ->get();
 
-        return view('student.dashboard', compact('reports'));
+        return view('student.dashboard', [
+            'reports' => $reports,
+            'title' => 'Dashboard Siswa',
+        ]);
     }
 
     /**
@@ -26,7 +29,9 @@ class StudentController extends Controller
      */
     public function create()
     {
-        return view('student.create');
+        return view('student.create', [
+            'title' => 'Buat Laporan',
+        ]);
     }
 
     /**
@@ -45,6 +50,8 @@ class StudentController extends Controller
         ]);
 
         $validatedData['user_id'] = auth()->id();
+        $validatedData['status'] = $validatedData['status'] ?? 'dilaporkan';
+        $validatedData['counselor_note'] = $validatedData['counselor_note'] ?? null;
 
         if ($request->hasFile('photo_path')) {
             $validatedData['photo_path'] = $request->file('photo_path')->store('reports', 'public');
