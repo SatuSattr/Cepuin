@@ -56,4 +56,8 @@ class User extends Authenticatable
     {
         return ($this->role ?? 'student') === 'student';
     }
+
+    public function orders(){
+        return $this->hasMany(report::class);
+    }
 }
