@@ -2,9 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\report;
-use Auth;
-use DB;
+use App\Models\Report;
 use Illuminate\Http\Request;
 
 class StudentController extends Controller
@@ -14,8 +12,11 @@ class StudentController extends Controller
      */
     public function index()
     {
-        $user = Auth::user();
-        $reports = report::all();
+        $reports = Report::query()
+            ->with('user')
+            ->where('user_id', auth()->id())
+            ->latest()
+            ->get();
 
         return view('student.dashboard', compact('reports'));
     }
@@ -33,59 +34,44 @@ class StudentController extends Controller
      */
     public function store(Request $request)
     {
-        // 1️⃣ Validasi dulu input dari form
         $validatedData = $request->validate([
-            'reported_name'   => 'required|string',
-            'reported_class'  => 'required|string',
+            'reported_name'   => 'required|string|max:255',
+            'reported_class'  => 'required|string|max:255',
             'incident_time'   => 'required|date',
             'description'     => 'required|string',
             'photo_path'      => 'nullable|file|mimes:webp,jpeg,png,jpg,gif,svg|max:2048',
-            'status'          => 'nullable|string',
+            'status'          => 'nullable|string|in:dilaporkan,direview,diproses,selesai',
             'counselor_note'  => 'nullable|string',
         ]);
 
-        // 2️⃣ Tambahkan field user_id manual
         $validatedData['user_id'] = auth()->id();
 
-        // 3️⃣ Simpan file foto (kalau ada)
         if ($request->hasFile('photo_path')) {
-            $validatedData['photo_path'] = $request->file('photo_path')->store('photos', 'public');
+            $validatedData['photo_path'] = $request->file('photo_path')->store('reports', 'public');
         }
 
-        // 4️⃣ Simpan ke database
         Report::create($validatedData);
 
-        // 5️⃣ Redirect
-        return redirect()->route('student.dashboard')->with('success', 'Laporan berhasil dikirim!');
+        return redirect()
+            ->route('student.dashboard')
+            ->with('success', 'Laporan berhasil dikirim!');
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(string $id)
     {
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(string $id)
     {
         //
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, string $id)
     {
         //
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(string $id)
     {
         //
