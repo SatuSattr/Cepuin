@@ -18,6 +18,13 @@ Route::middleware(['auth', 'verified', 'role:admin'])->group(function () {
     })->name('admin.dashboard');
 });
 
+// Siswa-only routes
+Route::middleware(['auth', 'verified', 'role:student'])->group(function () {
+    Route::get('/student', function () {
+        return view('student.dashboard');
+    })->name('student.dashboard');
+});
+
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
