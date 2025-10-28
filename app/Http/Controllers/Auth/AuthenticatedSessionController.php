@@ -31,7 +31,7 @@ class AuthenticatedSessionController extends Controller
         $user = $request->user();
         $default = ($user && method_exists($user, 'isAdmin') && $user->isAdmin())
             ? route('admin.dashboard', absolute: false)
-            : route('dashboard', absolute: false);
+            : route('student.dashboard', absolute: false);
 
         return redirect()->intended($default);
     }

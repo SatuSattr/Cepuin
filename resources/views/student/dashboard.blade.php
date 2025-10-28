@@ -8,9 +8,9 @@
 
                 <div class="flex items-center gap-3 w-full sm:w-auto">
 
-                    <button class="bg-secondary text-white px-4 py-2 rounded-lg hover:bg-secondary/90 transition">
+                    <a href="{{ url('student/create') }}" class="bg-secondary text-white px-4 py-2 rounded-lg hover:bg-secondary/90 transition">
                         + Tambah Laporan
-                    </button>
+                    </a>
                 </div>
             </div>
 
@@ -21,43 +21,37 @@
                         <tr>
                             <th class="py-3 px-4 text-left">Siswa</th>
                             <th class="py-3 px-4 text-left">Laporan</th>
+                            <th class="py-3 px-4 text-left">Waktu Kejadian</th>
                             <th class="py-3 px-4 text-left">Status</th>
                             <th class="py-3 px-4 text-center">Aksi</th>
                         </tr>
                     </thead>
 
                     <tbody class="divide-y divide-gray-200 bg-white">
+                    @forelse ($reports as $r)
+                        
                         <tr class="hover:bg-secondary/5 transition">
                             <td class="py-3 px-4 flex items-center gap-3">
-                                <img src="https://ui-avatars.com/api/?name=Rizky+Saputra" alt="Foto" class="w-8 h-8 rounded-full">
-                                <span>Rizky Saputra (XII RPL 2)</span>
+                                <span>{{ $r['reported_name'] }}</span>
                             </td>
-                            <td class="py-3 px-4">Laporan keterlambatan masuk sekolah</td>
+                            <td class="py-3 px-4">{{ $r['description'] }}</td>
+                            <td class="py-3 px-4">{{ $r['incident_time'] }}</td>
                             <td class="py-3 px-4">
                                 <span class="px-3 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">
-                                    Diproses
+                                    {{ $r['status'] }}
                                 </span>
                             </td>
                             <td class="py-3 px-4 text-center">
                                 <button class="text-secondary font-medium hover:underline">Detail</button>
                             </td>
                         </tr>
-
-                        <tr class="hover:bg-secondary/5 transition">
-                            <td class="py-3 px-4 flex items-center gap-3">
-                                <img src="https://ui-avatars.com/api/?name=Siti+Nurhaliza" alt="Foto" class="w-8 h-8 rounded-full">
-                                <span>Siti Nurhaliza (XI TKJ 1)</span>
-                            </td>
-                            <td class="py-3 px-4">Laporan kehilangan barang di kelas</td>
-                            <td class="py-3 px-4">
-                                <span class="px-3 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
-                                    Selesai
-                                </span>
-                            </td>
-                            <td class="py-3 px-4 text-center">
-                                <button class="text-secondary font-medium hover:underline">Detail</button>
+                            @empty
+                        <tr>
+                            <td colspan="4" class="text-center text-gray-500 py-4">
+                                Belum ada laporan.
                             </td>
                         </tr>
+                    @endforelse
                     </tbody>
                 </table>
             </div>

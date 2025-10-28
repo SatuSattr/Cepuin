@@ -17,10 +17,14 @@ Route::middleware(['auth', 'verified', 'role:admin'])->group(function () {
 
 // student-only routes
 Route::middleware(['auth', 'verified', 'role:student'])->group(function () {
-    Route::get('/student', function () {
-        return view('student.dashboard');
-    })->name('student.dashboard');
+    // ✅ Route dashboard student (lewat controller)
+    Route::get('/student', [StudentController::class, 'index'])->name('student.dashboard');
+
+    // ✅ Tambahin CRUD Student (khusus student)
+    Route::get('/student/create', [StudentController::class, 'create'])->name('student.create');
+    Route::post('/student', [StudentController::class, 'store'])->name('student.store');
 });
+
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
