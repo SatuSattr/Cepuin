@@ -19,10 +19,15 @@ class DatabaseSeeder extends Seeder
         // User::factory(10)->create();
 
         // Default student user
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
+        User::query()->firstOrCreate(
+            ['email' => 'test@example.com'],
+            [
+                'name' => 'Test User',
+                'password' => Hash::make('password'),
+                'role' => 'student',
+                'email_verified_at' => now(),
+            ]
+        );
 
         // Admin user
         User::query()->updateOrCreate(
@@ -34,5 +39,7 @@ class DatabaseSeeder extends Seeder
                 'email_verified_at' => now(),
             ]
         );
+
+        $this->call(ReportSeeder::class);
     }
 }

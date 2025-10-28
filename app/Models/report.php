@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class report extends Model
+class Report extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
         'user_id',
         'reported_name',
@@ -17,7 +20,8 @@ class report extends Model
         'counselor_note',
     ];
 
-    public function user(){
+    public function user()
+    {
         return $this->belongsTo(User::class);
     }
 }
